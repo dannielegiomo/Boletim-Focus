@@ -1,0 +1,39 @@
+name: Focus – Enviar resumo por e-mail
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # Dispara quando um resumo HTML novo/alterado é enviado à main
+      - "output/focus/focus_*.html"
+  workflow_dispatch:  # permite disparo manual pela aba Actions
+
+permissions:
+  contents: read  # só lê o repositório; o envio não commita nada
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Enviar resumo Focus por e-mail
+        # As credenciais vêm dos Secrets do repositório — nunca do código.
+        env:
+          FOCUS_SMTP_USER: ${{ secrets.FOCUS_SMTP_USER }}
+          FOCUS_SMTP_APP_PASSWORD: ${{ secrets.FOCUS_SMTP_APP_PASSWORD }}
+          FOCUS_EMAIL_DEST: ${{ secrets.FOCUS_EMAIL_DEST }}
+          FOCUS_EMAIL_BCC: ${{ secrets.FOCUS_EMAIL_BCC }}
+        # Sem --html: envia o focus_*.html mais recente de output/focus/
+        run: python src/enviar_email.py

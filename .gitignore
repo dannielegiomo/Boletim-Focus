@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Variáveis de ambiente
+.env
+
+# output/focus/ é versionado de propósito: contém os resumos executivos gerados
+# pelo agente de IA. Não adicione esta pasta aqui.
